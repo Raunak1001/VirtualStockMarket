@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/stockmarket"
+            android:icon="@drawable/aboutstock"
+            android:title="About Stock Market"/>
+        <item
+            android:id="@+id/mystocks"
+            android:icon="@drawable/icon1"
+            android:title="My Stocks"/>
+        <item
+            android:id="@+id/mytransactions"
+            android:icon="@drawable/transaction"
+            android:title="My Transactions"/>
+    </group>
+
+    <item android:title="The App">
+        <menu>
+            <item
+                android:id="@+id/aboutapp"
+                android:icon="@drawable/aboutapp"
+                android:title="About the app"/>
+            <item
+                android:id="@+id/aboutus"
+                android:icon="@drawable/us"
+                android:title="About Us"/>
+        </menu>
+    </item>
+
+</menu>
