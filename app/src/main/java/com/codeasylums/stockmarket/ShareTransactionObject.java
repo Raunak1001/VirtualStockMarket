@@ -24,7 +24,7 @@ public class ShareTransactionObject {
   }
 
   public void setShareRate(String shareRate) {
-    shareRate = shareRate;
+    this.shareRate = shareRate;
   }
 
   public String getAmountShares() {

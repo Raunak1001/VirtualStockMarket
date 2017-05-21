@@ -26,6 +26,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
   //User Tables
   private static final String TABLE_TRANSACTIONS = "myTransactions";
+  private static final String TABLE_SHARE_DATA = "shareData";
 
   private static final String KEY_COMPANY_NAME = "copanyName";
 
@@ -46,12 +47,19 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     String CREATE_TRANSACTIONS_TABLE = "CREATE TABLE " + TABLE_TRANSACTIONS + "("
         + KEY_ID + " INTEGER PRIMARY KEY,"
         + KEY_COMPANY_NAME + " TEXT,"
-        + KEY_AMOUNT_SHARES + " TEXT"
-        + KEY_SHARE_RATE + " TEXT"
-        +KEY_SOLD_OR_BOUGHT+"BOOLEAN"
+        + KEY_AMOUNT_SHARES + " TEXT,"
+        + KEY_SHARE_RATE + " TEXT,"
+        +KEY_SOLD_OR_BOUGHT+" BOOLEAN"
         + ")";
-
+    String CREATE_SHARE_TABLE = "CREATE TABLE " + TABLE_SHARE_DATA + "("
+        + KEY_ID + " INTEGER PRIMARY KEY,"
+        + KEY_COMPANY_NAME + " TEXT,"
+        + KEY_AMOUNT_SHARES + " TEXT,"
+        + KEY_SHARE_RATE + " TEXT"
+        + ")";
     sqLiteDatabase.execSQL(CREATE_TRANSACTIONS_TABLE);
+    sqLiteDatabase.execSQL(CREATE_SHARE_TABLE);
+
     Log.d(TAG, "Database tables created");
   }
 
@@ -70,10 +78,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getWritableDatabase();
 
     ContentValues transaction = new ContentValues();
-   transaction.put(KEY_COMPANY_NAME,soldShareDataObject.companyName);
-    transaction.put(KEY_AMOUNT_SHARES,soldShareDataObject.amountShares);
-    transaction.put(KEY_SHARE_RATE,soldShareDataObject.shareRate);
-    transaction.put(KEY_SOLD_OR_BOUGHT,soldShareDataObject.soldOrBought);
+   transaction.put(KEY_COMPANY_NAME,soldShareDataObject.getAmountShares());
+    transaction.put(KEY_AMOUNT_SHARES,soldShareDataObject.getAmountShares());
+    transaction.put(KEY_SHARE_RATE,soldShareDataObject.getShareRate());
+    transaction.put(KEY_SOLD_OR_BOUGHT,soldShareDataObject.isSoldOrBought());
 
     // Inserting Row
     long id = db.insert(TABLE_TRANSACTIONS, null, transaction);
@@ -106,6 +114,36 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     cursor.close();
     return shareTransactionObjectList;
   }
+  public void addShareDataToSqlite(ShareTransactionObject soldShareDataObject) {
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    ContentValues transaction = new ContentValues();
+    transaction.put(KEY_COMPANY_NAME,soldShareDataObject.companyName);
+    transaction.put(KEY_AMOUNT_SHARES,soldShareDataObject.amountShares);
+    transaction.put(KEY_SHARE_RATE,soldShareDataObject.shareRate);
+
+
+    String selectString = "SELECT * FROM " + TABLE_SHARE_DATA + " WHERE " + KEY_COMPANY_NAME + " = '"+soldShareDataObject.getCompanyName()+"'";
+
+    // Add the String you are searching by here.
+    // Put it in an array to avoid an unrecognized token error
+    Cursor cursor = db.rawQuery(selectString,null);
+    if(cursor.moveToFirst()){
+      soldShareDataObject.setAmountShares(cursor.getString(2)+soldShareDataObject.getAmountShares());
+      db.update(TABLE_SHARE_DATA, transaction,KEY_COMPANY_NAME+"='"+soldShareDataObject.getCompanyName()+"'" , null);
+Log.d("UPDATED",cursor.getString(1));
+    }else {
+      long id = db.insert(TABLE_SHARE_DATA, null, transaction);
+      ; // Closing database connection
+
+      Log.d(TAG, "New transaction inserted into sqlite: " + id);
+    }
+
+
+
+
+  }
+
 
 
  /* public void remAnn(String title, String description) {

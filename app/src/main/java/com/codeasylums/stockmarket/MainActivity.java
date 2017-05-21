@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
     shareDataLayoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(shareDataLayoutManager);
     //myadapter is the adapter class
-    shareDataAdapter = new myadapter(shareDataList);
+    shareDataAdapter = new myadapter(shareDataList,this);
     recyclerView.setAdapter(shareDataAdapter);
 
     getShareData();
