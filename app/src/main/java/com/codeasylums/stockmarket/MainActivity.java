@@ -23,15 +23,16 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
 
-  private GoogleApiClient client;
-  private RecyclerView recyclerView;
+  private GoogleApiClient            client;
+  private RecyclerView               recyclerView;
   private RecyclerView.LayoutManager shareDataLayoutManager;
-  private RecyclerView.Adapter shareDataAdapter;
+  private myadapter                  shareDataAdapter;
 
 
   final List<SharesData> shareDataList = new ArrayList<>();
 
-TextView test;
+  TextView test;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -50,13 +51,11 @@ TextView test;
     navigationView.setNavigationItemSelectedListener(this);
     addInitialDataToSharedList();
 
-    shareDataLayoutManager=new LinearLayoutManager(this);
+    shareDataLayoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(shareDataLayoutManager);
     //myadapter is the adapter class
-    shareDataAdapter=new myadapter(shareDataList);
+    shareDataAdapter = new myadapter(shareDataList);
     recyclerView.setAdapter(shareDataAdapter);
-
-
 
     getShareData();
 
@@ -153,6 +152,7 @@ TextView test;
         receivedGooglData[0] = true;
         if (receivedGooglData[0] == true && receivedMsftata[0] == true
             && receivedApplData[0] == true && receivedFbData[0] == true) {
+          shareDataAdapter.update(shareDataList);
           Log.d("GOTALLDATA", "AYA");
         }
 
@@ -166,6 +166,7 @@ TextView test;
         receivedMsftata[0] = true;
         if (receivedGooglData[0]
             && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
+          shareDataAdapter.update(shareDataList);
           Log.d("GOTALLDATA", "AYA");
         }
       }
@@ -177,6 +178,7 @@ TextView test;
         receivedApplData[0] = true;
         if (receivedGooglData[0]
             && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
+          shareDataAdapter.update(shareDataList);
           Log.d("GOTALLDATA", "AYA");
         }
       }
@@ -188,6 +190,7 @@ TextView test;
         receivedFbData[0] = true;
         if (receivedGooglData[0]
             && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
+          shareDataAdapter.update(shareDataList);
           Log.d("GOTALLDATA", "AYA");
         }
       }

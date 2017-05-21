@@ -12,40 +12,51 @@ import java.util.List;
  * Created by vic on 5/21/2017.
  */
 public class myadapter extends RecyclerView.Adapter<myadapter.ViewHolder> {
-    //getdata is class to get the data
-    private List<SharesData> getDataList;
 
-    myadapter(List<SharesData> getDataList) {
-        this.getDataList = getDataList;
+  //getdata is class to get the data
+  private List<SharesData> sharesDataList;
+
+  myadapter(List<SharesData> sharesDataList) {
+    this.sharesDataList = sharesDataList;
+  }
+
+  @Override
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    //cardrow is the xml file of card view
+    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardrow, parent, false);
+    return new ViewHolder(view);
+  }
+
+  @Override
+  public void onBindViewHolder(ViewHolder holder, int position) {
+    holder.companyNameTextView.setText(sharesDataList.get(position).getShareName());
+  holder.sharerateTextView.setText(sharesDataList.get(position).getShareRate());
+  }
+
+  @Override
+  public int getItemCount() {
+    return sharesDataList.size();
+  }
+
+  public class ViewHolder extends RecyclerView.ViewHolder {
+
+    private TextView companyNameTextView, sharerateTextView;
+
+    public ViewHolder(View itemView) {
+      super(itemView);
+      companyNameTextView = (TextView) itemView.findViewById(R.id.companyNameTextView);
+      sharerateTextView = (TextView) itemView.findViewById(R.id.shreRaTextView);
     }
+  }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //cardrow is the xml file of card view
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardrow, parent, false);
-        return new ViewHolder(view);
-    }
+  public  void update(List<SharesData> sharesDataList)
+  {
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        //getdata name = getDataList.get(position);
-        //holder.textView.setText(name.getname("get your data here"));
+    this.sharesDataList.get(0).setShareRate(sharesDataList.get(0).getShareRate());
+    this.sharesDataList.get(1).setShareRate(sharesDataList.get(1).getShareRate());
+    this.sharesDataList.get(2).setShareRate(sharesDataList.get(2).getShareRate());
+    this.sharesDataList.get(3).setShareRate(sharesDataList.get(3).getShareRate());
 
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return getDataList.size();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView textView;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.tv);
-
-        }
-    }
+    notifyDataSetChanged();
+  }
 }
