@@ -1,6 +1,7 @@
 package com.codeasylums.stockmarket;
 
 import android.util.Log;
+import android.widget.TextView;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import android.os.Bundle;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity
 
   final List<SharesData> shareDataList = new ArrayList<>();
 
-
+TextView test;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
