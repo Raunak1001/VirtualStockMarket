@@ -1,5 +1,6 @@
 package com.codeasylums.stockmarket;
 
+import android.util.Log;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import android.os.Bundle;
@@ -17,145 +18,192 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+    implements NavigationView.OnNavigationItemSelectedListener {
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+  final List<SharesData> shareDataList = new ArrayList<>();
 
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
-      getShareData();
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    drawer.setDrawerListener(toggle);
+    toggle.syncState();
 
+    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    navigationView.setNavigationItemSelectedListener(this);
+
+    addInitialDataToSharedList();
+
+    getShareData();
+
+  }
+
+  @Override
+  public void onBackPressed() {
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    if (drawer.isDrawerOpen(GravityCompat.START)) {
+      drawer.closeDrawer(GravityCompat.START);
+    } else {
+      super.onBackPressed();
+    }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    getMenuInflater().inflate(R.menu.main, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    int id = item.getItemId();
+
+    //noinspection SimplifiableIfStatement
+    if (id == R.id.action_settings) {
+      return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        }
-        else {
-            super.onBackPressed();
-        }
+    return super.onOptionsItemSelected(item);
+  }
+
+  @SuppressWarnings("StatementWithEmptyBody")
+  @Override
+  public boolean onNavigationItemSelected(MenuItem item) {
+    displaySelectedScreen(item.getItemId());
+    return true;
+  }
+
+  private void displaySelectedScreen(int itemId) {
+
+    //creating fragment object
+    Fragment fragment = null;
+
+    //initializing the fragment object which is selected
+    switch (itemId) {
+      case R.id.stockmarket:
+        fragment = new AboutStockMarketFragment();
+        break;
+      case R.id.mystocks:
+        fragment = new MyStocksFragment();
+        break;
+      case R.id.mytransactions:
+        fragment = new MyTransactionsFragment();
+        break;
+      case R.id.aboutapp:
+        fragment = new AboutAppFragment();
+        break;
+      case R.id.aboutus:
+        fragment = new AboutUsFragment();
+        break;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+    //replacing the fragment
+    if (fragment != null) {
+      FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+      ft.replace(R.id.content_frame, fragment);
+      ft.commit();
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        displaySelectedScreen(item.getItemId());
-        return true;
-    }
-
-    private void displaySelectedScreen(int itemId) {
-
-        //creating fragment object
-        Fragment fragment = null;
-
-        //initializing the fragment object which is selected
-        switch (itemId) {
-            case R.id.stockmarket:
-                fragment = new AboutStockMarketFragment();
-                break;
-            case R.id.mystocks:
-                fragment = new MyStocksFragment();
-                break;
-            case R.id.mytransactions:
-                fragment = new MyTransactionsFragment();
-                break;
-            case R.id.aboutapp:
-                fragment = new AboutAppFragment();
-                break;
-            case R.id.aboutus:
-                fragment = new AboutUsFragment();
-                break;
-        }
-
-        //replacing the fragment
-        if (fragment != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
-            ft.commit();
-        }
         /*LayoutInflater inflater = getLayoutInflater();
         RelativeLayout container = (RelativeLayout) findViewById(R.id.content_frame);
         inflater.inflate(R.layout.activity_main, container);*/
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-    }
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+  }
 
 
-    public void getShareData(){
+  public void getShareData() {
+    final boolean[] receivedGooglData = {false};
+    final boolean[] receivedMsftata = {false};
+    final boolean[] receivedApplData = {false};
+    final boolean[] receivedFbData = {false};
 
-      final List<SharesData> shareDataList=new ArrayList<>();
-
-      new GetStockData().getStockData("GOOGL", new ShareRateCallBack() {
-        @Override
-        public void onSuccess(String shareRate) {
-shareDataList.get(0).setShareRate(shareRate);
+    new GetStockData().getStockData("GOOGL", new ShareRateCallBack() {
+      @Override
+      public void onSuccess(String shareRate) {
+        shareDataList.get(0).setShareRate(shareRate);
+        receivedGooglData[0] = true;
+        if (receivedGooglData[0] == true && receivedMsftata[0] == true
+            && receivedApplData[0] == true && receivedFbData[0] == true) {
+          Log.d("GOTALLDATA", "AYA");
         }
-      });
 
-      new GetStockData().getStockData("MSFT", new ShareRateCallBack() {
-        @Override
-        public void onSuccess(String shareRate) {
+      }
+    });
 
+    new GetStockData().getStockData("MSFT", new ShareRateCallBack() {
+      @Override
+      public void onSuccess(String shareRate) {
+        shareDataList.get(1).setShareRate(shareRate);
+        receivedMsftata[0] = true;
+        if (receivedGooglData[0]
+            && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
+          Log.d("GOTALLDATA", "AYA");
         }
-      });
-      new GetStockData().getStockData("AAPL", new ShareRateCallBack() {
-        @Override
-        public void onSuccess(String shareRate) {
-
+      }
+    });
+    new GetStockData().getStockData("AAPL", new ShareRateCallBack() {
+      @Override
+      public void onSuccess(String shareRate) {
+        shareDataList.get(2).setShareRate(shareRate);
+        receivedApplData[0] = true;
+        if (receivedGooglData[0]
+            && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
+          Log.d("GOTALLDATA", "AYA");
         }
-      });
-      new GetStockData().getStockData("FB", new ShareRateCallBack() {
-        @Override
-        public void onSuccess(String shareRate) {
-
+      }
+    });
+    new GetStockData().getStockData("FB", new ShareRateCallBack() {
+      @Override
+      public void onSuccess(String shareRate) {
+        shareDataList.get(3).setShareRate(shareRate);
+        receivedFbData[0] = true;
+        if (receivedGooglData[0]
+            && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
+          Log.d("GOTALLDATA", "AYA");
         }
-      });
+      }
+    });
 
 
-    }
+  }
+
+
+  public void addInitialDataToSharedList() {
+
+    SharesData sharesData = new SharesData();
+    sharesData.setShareRate("0");
+    sharesData.setShareName("GOOGL");
+    shareDataList.add(0, sharesData);
+
+    sharesData = new SharesData();
+    sharesData.setShareRate("0");
+    sharesData.setShareName("MSFT");
+    shareDataList.add(1, sharesData);
+
+    sharesData = new SharesData();
+    sharesData.setShareRate("0");
+    sharesData.setShareName("APPL");
+    shareDataList.add(2, sharesData);
+
+    sharesData = new SharesData();
+    sharesData.setShareRate("0");
+    sharesData.setShareName("FB");
+    shareDataList.add(3, sharesData);
+
+
+  }
+
 
 }

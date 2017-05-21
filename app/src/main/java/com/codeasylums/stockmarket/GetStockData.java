@@ -21,7 +21,7 @@ public class GetStockData {
 
   static               String tag_json_obj = "json_obj_req";
 
-  public void getStockData(String companyName,ShareRateCallBack shareRateCallBack) {
+  public void getStockData(final String companyName, final ShareRateCallBack shareRateCallBack) {
     String baseUrl = "http://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&interval=1min&apikey=N52O";
     baseUrl = baseUrl + "&symbol=" + companyName;
 
@@ -67,15 +67,17 @@ public class GetStockData {
                     + formatter.format(hour) + ":" + formatter.format(minute) + ":00";
 
             Log.d("OUTPUT", dateSting);
-
+            String shareRate="0";
             try {
               JSONObject timeSeriesObject = response.getJSONObject("Time Series (1min)");
-              Log.d("MAIN", response.getJSONObject("Time Series (1min)").toString());
-              String shareRate = timeSeriesObject.getJSONObject(dateSting).getString("4. close");
+              Log.d(companyName, response.getJSONObject("Time Series (1min)").toString());
+               shareRate = timeSeriesObject.getJSONObject(dateSting).getString("4. close");
               Log.d("SHARE_RATE", shareRate.toString());
             } catch (JSONException e) {
               e.printStackTrace();
             }
+
+            shareRateCallBack.onSuccess(shareRate);
 
           }
         }, new Response.ErrorListener() {
