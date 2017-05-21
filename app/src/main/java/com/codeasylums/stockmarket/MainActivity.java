@@ -1,5 +1,7 @@
 package com.codeasylums.stockmarket;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -20,6 +22,12 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
 
+  private GoogleApiClient client;
+  private RecyclerView recyclerView;
+  private RecyclerView.LayoutManager shareDataLayoutManager;
+  private RecyclerView.Adapter shareDataAdapter;
+
+
   final List<SharesData> shareDataList = new ArrayList<>();
 
 
@@ -29,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rview);
 
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -38,8 +47,15 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
-
     addInitialDataToSharedList();
+
+    shareDataLayoutManager=new LinearLayoutManager(this);
+    recyclerView.setLayoutManager(shareDataLayoutManager);
+    //myadapter is the adapter class
+    shareDataAdapter=new myadapter(shareDataList);
+    recyclerView.setAdapter(shareDataAdapter);
+
+
 
     getShareData();
 
