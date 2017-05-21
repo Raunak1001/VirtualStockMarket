@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,10 +41,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //displaySelectedScreen(R.id.nav_camera);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+      getShareData();
+
     }
 
     @Override
@@ -122,4 +123,39 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+
+
+    public void getShareData(){
+
+      final List<SharesData> shareDataList=new ArrayList<>();
+
+      new GetStockData().getStockData("GOOGL", new ShareRateCallBack() {
+        @Override
+        public void onSuccess(String shareRate) {
+shareDataList.get(0).setShareRate(shareRate);
+        }
+      });
+
+      new GetStockData().getStockData("MSFT", new ShareRateCallBack() {
+        @Override
+        public void onSuccess(String shareRate) {
+
+        }
+      });
+      new GetStockData().getStockData("AAPL", new ShareRateCallBack() {
+        @Override
+        public void onSuccess(String shareRate) {
+
+        }
+      });
+      new GetStockData().getStockData("FB", new ShareRateCallBack() {
+        @Override
+        public void onSuccess(String shareRate) {
+
+        }
+      });
+
+
+    }
+
 }
