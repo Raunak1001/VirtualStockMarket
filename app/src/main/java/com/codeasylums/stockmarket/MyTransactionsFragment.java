@@ -3,9 +3,14 @@ package com.codeasylums.stockmarket;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -25,6 +30,11 @@ public class MyTransactionsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager shareDataLayoutManager;
+    private myTransactionAdapter                  shareDataAdapter;
+    List<ShareTransactionObject> shareDataList = new ArrayList<>();
+    SQLiteHandler sqLiteHandler;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,7 +73,18 @@ public class MyTransactionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_transactions, container, false);
+        View rootview= inflater.inflate(R.layout.fragment_my_transactions, container, false);
+        recyclerView= (RecyclerView) rootview.findViewById(R.id.recyclerview);
+        shareDataLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(shareDataLayoutManager);
+        sqLiteHandler=new SQLiteHandler(getActivity());
+        shareDataList=sqLiteHandler.getTransactions();
+        //myadapter is the adapter class
+        shareDataAdapter = new myTransactionAdapter(shareDataList,getActivity());
+        recyclerView.setAdapter(shareDataAdapter);
+
+
+        return rootview;
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {

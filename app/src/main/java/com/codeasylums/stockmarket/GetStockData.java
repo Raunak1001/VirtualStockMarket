@@ -1,16 +1,19 @@
 package com.codeasylums.stockmarket;
 
 import android.util.Log;
+
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
-import java.text.DecimalFormat;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by raunak on 21/5/17.
@@ -49,7 +52,7 @@ public class GetStockData {
               minute = 0;
               dateTime = dateTime.minusDays(2);
               date = dateTime.getDayOfMonth();
-            } else if (hour > 16) {
+            } else if (hour >=16) {
               hour = 16;
               minute = 0;
             } else if (hour < 10) {
