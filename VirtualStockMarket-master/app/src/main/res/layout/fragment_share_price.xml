@@ -1,0 +1,24 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+  android:paddingTop="60dp"
+  android:paddingLeft="5dp"
+    tools:context="com.codeasylums.stockmarket.SharePrice">
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.v4.widget.SwipeRefreshLayout
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/swiperefresh"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+          android:id="@+id/rview"
+          android:scrollbars="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</FrameLayout>

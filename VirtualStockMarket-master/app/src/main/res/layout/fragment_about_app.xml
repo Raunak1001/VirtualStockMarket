@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AboutStockMarketFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/sample"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="75dp"
+        android:text="About the App"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textSize="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sample"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:text="VSM uses real markets and their data to help beginners make their first steps in the world of stock investment. Learn trading with our real market simulator and use it as a guide for your future investments.
+"
+        android:textColor="?attr/actionMenuTextColor" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="**** Happy trading ****"
+        android:textColor="?attr/actionMenuTextColor" />
+
+</RelativeLayout>
