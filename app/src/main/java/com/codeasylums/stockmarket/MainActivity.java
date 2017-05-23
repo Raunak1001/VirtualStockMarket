@@ -33,15 +33,14 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
-
-  private RecyclerView               recyclerView;
-  private RecyclerView.LayoutManager shareDataLayoutManager;
-  private myadapter                  shareDataAdapter;
-  private SwipeRefreshLayout         swipeRefreshLayout;
-  AlertDialog alertDialog;
+private SwipeRefreshLayout         swipeRefreshLayout;
+  AlertDialog       alertDialog;
   SharedPreferences sharedPreferences;
+  static int mainId = 0;
+  NavigationView navigationView;
 
-  final List<SharesData> shareDataList = new ArrayList<>();
+
+
   FragmentTransaction ft;
 
   @Override
@@ -50,49 +49,27 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-    recyclerView = (RecyclerView) findViewById(R.id.rview);
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    drawer.setDrawerListener(toggle);
+    toggle.syncState();
+    ft = getSupportFragmentManager().beginTransaction();
     alertDialog =new AlertDialog.Builder(this).create();
     alertDialog.setCancelable(false);
-sharedPreferences = getSharedPreferences("Wallet",MODE_PRIVATE);
+
+    sharedPreferences = this.getSharedPreferences("Wallet",MODE_PRIVATE);
     String amount =sharedPreferences.getString("MONEY","0");
     if(Double.parseDouble(amount)==0){
       Editor editor= sharedPreferences.edit();
       editor.putString("MONEY","25000");
       editor.commit();
     }
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-    drawer.setDrawerListener(toggle);
-    toggle.syncState();
-    swipeRefreshLayout.setRefreshing(true);
-    swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-      @Override
-      public void onRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
-        getShareData();
-      }
-    });
 
-    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+     navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
-    addInitialDataToSharedList();
-
-    shareDataLayoutManager = new LinearLayoutManager(this);
-    recyclerView.setLayoutManager(shareDataLayoutManager);
-    //myadapter is the adapter class
-    shareDataAdapter = new myadapter(shareDataList, this);
-    recyclerView.setAdapter(shareDataAdapter);
-
-    new Timer().scheduleAtFixedRate(new TimerTask() {
-      @Override
-      public void run() {
-        getShareData();
-      }
-    }, 0, 2000);
-
-
+    ft.replace(R.id.content_frame, new SharePrice());
+ft.commit();
 
   }
 
@@ -111,7 +88,6 @@ sharedPreferences = getSharedPreferences("Wallet",MODE_PRIVATE);
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
 
-
     return true;
   }
 
@@ -124,21 +100,20 @@ sharedPreferences = getSharedPreferences("Wallet",MODE_PRIVATE);
 
     //noinspection SimplifiableIfStatement
     if (id == R.id.action_settings) {
-      String amount=sharedPreferences.getString("MONEY","0");
-        alertDialog.setTitle("Your Balance");
-        alertDialog.setMessage(amount);
-        alertDialog.setCancelable(true);
-        alertDialog.show();
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            alertDialog.hide();
-          }
-        });
+      String amount = sharedPreferences.getString("MONEY", "0");
+      alertDialog.setTitle("Your Balance");
+      alertDialog.setMessage(amount);
+      alertDialog.setCancelable(true);
+      alertDialog.show();
+      alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          alertDialog.hide();
+        }
+      });
 
-        Log.d("WALLET", "wallet");
-      }
-
+      Log.d("WALLET", "wallet");
+    }
 
     return super.onOptionsItemSelected(item);
   }
@@ -154,134 +129,37 @@ sharedPreferences = getSharedPreferences("Wallet",MODE_PRIVATE);
 
     //creating fragment object
     Fragment fragment = null;
+    navigationView.setCheckedItem(itemId);
+    switch (itemId) {
 
-    if (itemId == R.id.stockmarket) {
-      setTitle("Stock Prices");
-      getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-      recyclerView.setVisibility(View.VISIBLE);
-    } else {
-      switch (itemId) {
+      case R.id.stockmarket:
 
-        case R.id.mystocks:
-          fragment = new MyStocksFragment();
-          break;
-        case R.id.mytransactions:
-          fragment = new MyTransactionsFragment();
-          break;
-        case R.id.aboutapp:
-          fragment = new AboutAppFragment();
-          break;
-        case R.id.aboutus:
-          fragment = new AboutUsFragment();
-          break;
-      }
+        fragment = new SharePrice();
+        break;
+      case R.id.mystocks:
 
-      if (fragment != null) {
-        ft = getSupportFragmentManager().beginTransaction();
-        recyclerView.setVisibility(View.INVISIBLE);
-       /* if(getSupportFragmentManager().getFragments() !=null && getSupportFragmentManager().getFragments().size()!=0){
-          getSupportFragmentManager().getFragments().clear();
-        }*/
-        ft.replace(R.id.content_frame, fragment);
-        ft.commit();
-
-      }
+        fragment = new MyStocksFragment();
+        break;
+      case R.id.mytransactions:
+        fragment = new MyTransactionsFragment();
+        break;
+      case R.id.aboutapp:
+        navigationView.setCheckedItem(R.id.aboutapp);
+        fragment = new AboutAppFragment();
+        break;
+      case R.id.aboutus:
+        fragment = new AboutUsFragment();
+        break;
     }
+
+    if (fragment != null) {
+
+      getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+    }
+
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
-  }
-
-
-  public void getShareData() {
-    final boolean[] receivedGooglData = {false};
-    final boolean[] receivedMsftata = {false};
-    final boolean[] receivedApplData = {false};
-    final boolean[] receivedFbData = {false};
-
-    new GetStockData().getStockData("GOOGL", new ShareRateCallBack() {
-      @Override
-      public void onSuccess(String shareRate) {
-        shareDataList.get(0).setShareRate(shareRate);
-        receivedGooglData[0] = true;
-        if (receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
-          shareDataAdapter.update(shareDataList);
-          swipeRefreshLayout.setRefreshing(false);
-          Log.d("GOTALLDATA", "AYA");
-        }
-
-      }
-    });
-
-    new GetStockData().getStockData("MSFT", new ShareRateCallBack() {
-      @Override
-      public void onSuccess(String shareRate) {
-        shareDataList.get(1).setShareRate(shareRate);
-        receivedMsftata[0] = true;
-        if (receivedGooglData[0]
-            && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
-          shareDataAdapter.update(shareDataList);
-          swipeRefreshLayout.setRefreshing(false);
-
-          Log.d("GOTALLDATA", "AYA");
-        }
-      }
-    });
-    new GetStockData().getStockData("AAPL", new ShareRateCallBack() {
-      @Override
-      public void onSuccess(String shareRate) {
-        shareDataList.get(2).setShareRate(shareRate);
-        receivedApplData[0] = true;
-        if (receivedGooglData[0]
-            && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
-          shareDataAdapter.update(shareDataList);
-          swipeRefreshLayout.setRefreshing(false);
-
-          Log.d("GOTALLDATA", "AYA");
-        }
-      }
-    });
-    new GetStockData().getStockData("FB", new ShareRateCallBack() {
-      @Override
-      public void onSuccess(String shareRate) {
-        shareDataList.get(3).setShareRate(shareRate);
-        receivedFbData[0] = true;
-        if (receivedGooglData[0]
-            && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
-          shareDataAdapter.update(shareDataList);
-          swipeRefreshLayout.setRefreshing(false);
-
-          Log.d("GOTALLDATA", "AYA");
-        }
-      }
-    });
-
-
-  }
-
-
-  public void addInitialDataToSharedList() {
-
-    SharesData sharesData = new SharesData();
-    sharesData.setShareRate("0");
-    sharesData.setShareName("GOOGL");
-    shareDataList.add(0, sharesData);
-
-    sharesData = new SharesData();
-    sharesData.setShareRate("0");
-    sharesData.setShareName("MSFT");
-    shareDataList.add(1, sharesData);
-
-    sharesData = new SharesData();
-    sharesData.setShareRate("0");
-    sharesData.setShareName("APPL");
-    shareDataList.add(2, sharesData);
-
-    sharesData = new SharesData();
-    sharesData.setShareRate("0");
-    sharesData.setShareName("FB");
-    shareDataList.add(3, sharesData);
-
-
   }
 
 
