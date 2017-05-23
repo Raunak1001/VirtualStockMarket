@@ -149,8 +149,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     ContentValues transaction = new ContentValues();
     transaction.put(KEY_COMPANY_NAME,soldShareDataObject.companyName);
-    transaction.put(KEY_AMOUNT_SHARES,soldShareDataObject.amountShares);
-    transaction.put(KEY_SHARE_RATE,soldShareDataObject.shareRate);
+
 
 
     String selectString = "SELECT * FROM " + TABLE_SHARE_DATA + " WHERE " + KEY_COMPANY_NAME + " = '"+soldShareDataObject.getCompanyName()+"'";
@@ -159,10 +158,24 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Put it in an array to avoid an unrecognized token error
     Cursor cursor = db.rawQuery(selectString,null);
     if(cursor.moveToFirst()){
+      double shareRate = Double.parseDouble(cursor.getString(3));
+      double amountShare=Double.parseDouble(cursor.getString(2));
+      double newShareRate=Double.parseDouble(soldShareDataObject.getShareRate());
+      double newAmountShare=Double.parseDouble(soldShareDataObject.getAmountShares());
+      double newAmount=((shareRate*amountShare)+newAmountShare*newShareRate)/(amountShare+newAmountShare);
       soldShareDataObject.setAmountShares(cursor.getString(2)+soldShareDataObject.getAmountShares());
+      transaction.put(KEY_SHARE_RATE,newAmount);
+      transaction.put(KEY_AMOUNT_SHARES,
+          newAmountShare+amountShare);
+
+
       db.update(TABLE_SHARE_DATA, transaction,KEY_COMPANY_NAME+"='"+soldShareDataObject.getCompanyName()+"'" , null);
-Log.d("UPDATED",cursor.getString(1));
+
+      Log.d("UPDATED",cursor.getString(1));
     }else {
+      transaction.put(KEY_SHARE_RATE,soldShareDataObject.getShareRate());
+      transaction.put(KEY_AMOUNT_SHARES,
+          soldShareDataObject.getAmountShares());
       long id = db.insert(TABLE_SHARE_DATA, null, transaction);
       ; // Closing database connection
 
