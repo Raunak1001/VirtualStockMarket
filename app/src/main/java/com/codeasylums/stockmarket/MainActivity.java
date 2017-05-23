@@ -28,6 +28,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
@@ -83,7 +85,14 @@ sharedPreferences = getSharedPreferences("Wallet",MODE_PRIVATE);
     shareDataAdapter = new myadapter(shareDataList, this);
     recyclerView.setAdapter(shareDataAdapter);
 
-    getShareData();
+    new Timer().scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        getShareData();
+      }
+    }, 0, 2000);
+
+
 
   }
 

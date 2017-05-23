@@ -51,7 +51,7 @@
     android:layout_weight="0.2"
     android:layout_gravity="center_vertical"
     android:layout_marginRight="10dp"
-    android:text="Buy 1" />
+    android:text="Buy" />
 
 
 </LinearLayout>
