@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity
     Fragment fragment = null;
 
     if(itemId==R.id.stockmarket){
+      setTitle("Stock Prices");
       getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
       recyclerView.setVisibility(View.VISIBLE);
     }else {

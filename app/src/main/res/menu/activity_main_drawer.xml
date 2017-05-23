@@ -5,7 +5,7 @@
         <item
             android:id="@+id/stockmarket"
             android:icon="@drawable/aboutstock"
-            android:title="About Stock Market"/>
+            android:title="Stock Prices"/>
         <item
             android:id="@+id/mystocks"
             android:icon="@drawable/icon1"

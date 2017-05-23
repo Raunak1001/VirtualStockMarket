@@ -3,6 +3,7 @@ package com.codeasylums.stockmarket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,8 +44,6 @@ Context context;
     holder.buyButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-
-
 
         holder.alertDialog.setTitle(sharesDataList.get(position).getShareName());
         holder.alertDialog.setCancelable(false);
@@ -97,11 +96,13 @@ Context context;
 Button buyButton;
     SQLiteHandler sqLiteHandler;
     AlertDialog alertDialog ;
+    CardView cardView ;
     public ViewHolder(View itemView) {
       super(itemView);
       companyNameTextView = (TextView) itemView.findViewById(R.id.companyNameTextView);
       sharerateTextView = (TextView) itemView.findViewById(R.id.shreRaTextView);
     buyButton= (Button) itemView.findViewById(R.id.buyButton);
+      cardView= (CardView) itemView.findViewById(R.id.card);
       alertDialog =new AlertDialog.Builder(context).create();
       sqLiteHandler=new SQLiteHandler(context);
     }
