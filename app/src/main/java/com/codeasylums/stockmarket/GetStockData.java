@@ -52,7 +52,7 @@ public class GetStockData {
             } else if (hour > 16) {
               hour = 16;
               minute = 0;
-            } else if (hour < 9) {
+            } else if (hour < 10) {
               hour = 16;
               minute = 0;
               dateTime = dateTime.minusDays(1);

@@ -78,7 +78,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getWritableDatabase();
 
     ContentValues transaction = new ContentValues();
-   transaction.put(KEY_COMPANY_NAME,soldShareDataObject.getAmountShares());
+   transaction.put(KEY_COMPANY_NAME,soldShareDataObject.getCompanyName());
     transaction.put(KEY_AMOUNT_SHARES,soldShareDataObject.getAmountShares());
     transaction.put(KEY_SHARE_RATE,soldShareDataObject.getShareRate());
     transaction.put(KEY_SOLD_OR_BOUGHT,soldShareDataObject.isSoldOrBought());
@@ -114,6 +114,36 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     cursor.close();
     return shareTransactionObjectList;
   }
+
+  public List<ShareTransactionObject> getSharedData(){
+    List<ShareTransactionObject> shareTransactionObjectList= new ArrayList<>();
+    String selectQuery = "SELECT  * FROM " + TABLE_SHARE_DATA;
+    int i = 0;
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = db.rawQuery(selectQuery, null);
+
+    // Move to first row
+    cursor.moveToFirst();
+
+    while (cursor.isAfterLast() == false) {
+      ShareTransactionObject shareTransactionObject=new ShareTransactionObject();
+      shareTransactionObject.setCompanyName(cursor.getString(1));
+      shareTransactionObject.setShareRate(cursor.getString(3));
+      shareTransactionObject.setAmountShares(cursor.getString(2));
+      cursor.moveToNext();
+      shareTransactionObjectList.add(i,shareTransactionObject);
+      i++;
+
+    }
+    cursor.close();
+    return shareTransactionObjectList;
+  }
+
+
+
+
+
+
   public void addShareDataToSqlite(ShareTransactionObject soldShareDataObject) {
     SQLiteDatabase db = this.getWritableDatabase();
 

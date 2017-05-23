@@ -1,6 +1,13 @@
 package com.codeasylums.stockmarket;
 
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,11 +32,12 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
 
-  private GoogleApiClient            client;
   private RecyclerView               recyclerView;
   private RecyclerView.LayoutManager shareDataLayoutManager;
   private myadapter                  shareDataAdapter;
-
+  private SwipeRefreshLayout         swipeRefreshLayout;
+  AlertDialog alertDialog;
+  SharedPreferences sharedPreferences;
 
   final List<SharesData> shareDataList = new ArrayList<>();
   FragmentTransaction ft;
@@ -40,14 +48,30 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-
-   recyclerView = (RecyclerView) findViewById(R.id.rview);
-
+    swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+    recyclerView = (RecyclerView) findViewById(R.id.rview);
+    alertDialog =new AlertDialog.Builder(this).create();
+    alertDialog.setCancelable(false);
+sharedPreferences = getSharedPreferences("Wallet",MODE_PRIVATE);
+    String amount =sharedPreferences.getString("MONEY","0");
+    if(Double.parseDouble(amount)==0){
+      Editor editor= sharedPreferences.edit();
+      editor.putString("MONEY","25000");
+      editor.commit();
+    }
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     drawer.setDrawerListener(toggle);
     toggle.syncState();
+    swipeRefreshLayout.setRefreshing(true);
+    swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        getShareData();
+      }
+    });
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
@@ -56,7 +80,7 @@ public class MainActivity extends AppCompatActivity
     shareDataLayoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(shareDataLayoutManager);
     //myadapter is the adapter class
-    shareDataAdapter = new myadapter(shareDataList,this);
+    shareDataAdapter = new myadapter(shareDataList, this);
     recyclerView.setAdapter(shareDataAdapter);
 
     getShareData();
@@ -77,6 +101,8 @@ public class MainActivity extends AppCompatActivity
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
+
+
     return true;
   }
 
@@ -89,8 +115,21 @@ public class MainActivity extends AppCompatActivity
 
     //noinspection SimplifiableIfStatement
     if (id == R.id.action_settings) {
-      return true;
-    }
+      String amount=sharedPreferences.getString("MONEY","0");
+        alertDialog.setTitle("Your Balance");
+        alertDialog.setMessage(amount);
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i) {
+            alertDialog.hide();
+          }
+        });
+
+        Log.d("WALLET", "wallet");
+      }
+
 
     return super.onOptionsItemSelected(item);
   }
@@ -107,11 +146,11 @@ public class MainActivity extends AppCompatActivity
     //creating fragment object
     Fragment fragment = null;
 
-    if(itemId==R.id.stockmarket){
+    if (itemId == R.id.stockmarket) {
       setTitle("Stock Prices");
       getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
       recyclerView.setVisibility(View.VISIBLE);
-    }else {
+    } else {
       switch (itemId) {
 
         case R.id.mystocks:
@@ -134,7 +173,7 @@ public class MainActivity extends AppCompatActivity
        /* if(getSupportFragmentManager().getFragments() !=null && getSupportFragmentManager().getFragments().size()!=0){
           getSupportFragmentManager().getFragments().clear();
         }*/
-        ft.replace(R.id.content_frame,fragment);
+        ft.replace(R.id.content_frame, fragment);
         ft.commit();
 
       }
@@ -155,9 +194,9 @@ public class MainActivity extends AppCompatActivity
       public void onSuccess(String shareRate) {
         shareDataList.get(0).setShareRate(shareRate);
         receivedGooglData[0] = true;
-        if (receivedGooglData[0] == true && receivedMsftata[0] == true
-            && receivedApplData[0] == true && receivedFbData[0] == true) {
+        if (receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
           shareDataAdapter.update(shareDataList);
+          swipeRefreshLayout.setRefreshing(false);
           Log.d("GOTALLDATA", "AYA");
         }
 
@@ -172,6 +211,8 @@ public class MainActivity extends AppCompatActivity
         if (receivedGooglData[0]
             && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
           shareDataAdapter.update(shareDataList);
+          swipeRefreshLayout.setRefreshing(false);
+
           Log.d("GOTALLDATA", "AYA");
         }
       }
@@ -184,6 +225,8 @@ public class MainActivity extends AppCompatActivity
         if (receivedGooglData[0]
             && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
           shareDataAdapter.update(shareDataList);
+          swipeRefreshLayout.setRefreshing(false);
+
           Log.d("GOTALLDATA", "AYA");
         }
       }
@@ -196,6 +239,8 @@ public class MainActivity extends AppCompatActivity
         if (receivedGooglData[0]
             && receivedMsftata[0] && receivedApplData[0] && receivedFbData[0]) {
           shareDataAdapter.update(shareDataList);
+          swipeRefreshLayout.setRefreshing(false);
+
           Log.d("GOTALLDATA", "AYA");
         }
       }
