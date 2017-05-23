@@ -13,6 +13,9 @@
     tools:context="com.codeasylums.stockmarket.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rview"
         android:scrollbars="vertical"

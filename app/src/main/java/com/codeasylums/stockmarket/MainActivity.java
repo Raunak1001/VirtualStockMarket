@@ -1,8 +1,10 @@
 package com.codeasylums.stockmarket;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -30,8 +32,7 @@ public class MainActivity extends AppCompatActivity
 
 
   final List<SharesData> shareDataList = new ArrayList<>();
-
-  TextView test;
+  FragmentTransaction ft;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,8 @@ public class MainActivity extends AppCompatActivity
     setContentView(R.layout.activity_main);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rview);
+
+   recyclerView = (RecyclerView) findViewById(R.id.rview);
 
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -105,35 +107,37 @@ public class MainActivity extends AppCompatActivity
     //creating fragment object
     Fragment fragment = null;
 
-    //initializing the fragment object which is selected
-    switch (itemId) {
-      case R.id.stockmarket:
-        fragment = new AboutStockMarketFragment();
-        break;
-      case R.id.mystocks:
-        fragment = new MyStocksFragment();
-        break;
-      case R.id.mytransactions:
-        fragment = new MyTransactionsFragment();
-        break;
-      case R.id.aboutapp:
-        fragment = new AboutAppFragment();
-        break;
-      case R.id.aboutus:
-        fragment = new AboutUsFragment();
-        break;
-    }
+    if(itemId==R.id.stockmarket){
+      getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+      recyclerView.setVisibility(View.VISIBLE);
+    }else {
+      switch (itemId) {
 
-    //replacing the fragment
-    if (fragment != null) {
-      FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-      ft.replace(R.id.content_frame, fragment);
-      ft.commit();
-    }
-        /*LayoutInflater inflater = getLayoutInflater();
-        RelativeLayout container = (RelativeLayout) findViewById(R.id.content_frame);
-        inflater.inflate(R.layout.activity_main, container);*/
+        case R.id.mystocks:
+          fragment = new MyStocksFragment();
+          break;
+        case R.id.mytransactions:
+          fragment = new MyTransactionsFragment();
+          break;
+        case R.id.aboutapp:
+          fragment = new AboutAppFragment();
+          break;
+        case R.id.aboutus:
+          fragment = new AboutUsFragment();
+          break;
+      }
 
+      if (fragment != null) {
+        ft = getSupportFragmentManager().beginTransaction();
+        recyclerView.setVisibility(View.INVISIBLE);
+       /* if(getSupportFragmentManager().getFragments() !=null && getSupportFragmentManager().getFragments().size()!=0){
+          getSupportFragmentManager().getFragments().clear();
+        }*/
+        ft.replace(R.id.content_frame,fragment);
+        ft.commit();
+
+      }
+    }
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
   }
